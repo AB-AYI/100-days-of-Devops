@@ -1,0 +1,76 @@
+📘 Day 01 – Task 2: Creating a Custom Apache User
+🔹 Overview
+
+In Linux and DevOps environments, application isolation is a critical security practice. Instead of running multiple web applications under a single shared user (like apache or www-data), we create dedicated system users for each application.
+
+This approach ensures:
+
+Security containment → if one application is compromised, it cannot access another.
+
+Auditability → logs clearly show which application performed an action.
+
+Consistency across servers → assigning fixed UIDs avoids conflicts when applications are migrated or run on multiple servers.
+
+In this task, the goal was to create a custom Apache user for a specific application.
+
+🔹 Task Requirements
+
+Server: App Server 1
+
+Create a user named siva
+
+Assign a unique UID = 1487
+
+Set the home directory as /var/www/siva
+
+🔹 Implementation
+# Connect to App Server 1
+ssh tony@stapp01  
+
+# Create the user with custom UID and home directory
+sudo useradd -u 1487 -d /var/www/siva -m siva
+
+🔹 Explanation of Command
+
+useradd → Utility to create new users.
+
+-u 1487 → Manually assigns UID 1487. This avoids random UID assignment and ensures consistency across environments.
+
+-d /var/www/siva → Specifies a custom home directory for the user, placing it under /var/www/, which is the standard web root for Apache applications.
+
+-m → Automatically creates the directory if it does not exist.
+
+👉 Why this is important:
+
+Each application runs under its own user for better security and access control.
+
+Using /var/www/ follows web server best practices.
+
+Fixed UID avoids permission mismatches during deployments.
+
+🔹 Verification
+
+Check user info:
+
+id siva
+
+
+Expected:
+
+uid=1487(siva) gid=1487(siva) groups=1487(siva)
+
+
+Check home directory:
+
+ls -ld /var/www/siva
+
+
+Expected:
+
+drwx------  2 siva siva 4096 Sep 30 12:00 /var/www/siva
+
+🔹 Reflection
+
+This task demonstrated how to create dedicated service accounts for web applications. By isolating each app under its own Linux user, we minimize risks, simplify audits, and align with the principle of least privilege.
+
+This practice is widely used in production environments to harden servers and prepare them for CI/CD deployments where multiple applications may coexist securely.
